@@ -1,5 +1,5 @@
 Name:           xcp-metrics
-Version:        0.0.0
+Version:        0.0.1
 Release:        el7.yd0
 Summary:        Rust-based plugins for xcp-rrdd
 
@@ -7,8 +7,8 @@ License:        AGPL-3.0-only
 URL:            https://github.com/xcp-ng/xcp-metrics/
 
 # source + third-party/
-Source0:        xcp-metrics-0.0.0.tar.gz
-Source1:        xcp-metrics-0.0.0-vendor.tar.gz
+Source0:        xcp-metrics-0.0.1.tar.gz
+Source1:        xcp-metrics-0.0.1-vendor.tar.gz
 # config for third-party/ usage
 Source2:        cargo-config.toml
 
@@ -39,6 +39,8 @@ cargo --offline build --release
 # FIXME does not like this does not come from "cargo package"?
 #cargo --offline install
 %{__install} -m755 -d %{buildroot}%{_sbindir} %{buildroot}/opt/xensource/libexec/xcp-rrdd-plugins/
+%{__install} -m755 target/release/xcp-metrics %{buildroot}/%{_sbindir}
+%{__install} -m755 target/release/xcp-metrics-openmetrics-proxy %{buildroot}/%{_sbindir}
 %{__install} -m755 target/release/xcp-metrics-plugin-squeezed %{buildroot}/%{_sbindir}
 ln -rs %{buildroot}/%{_sbindir}/xcp-metrics-plugin-squeezed %{buildroot}/opt/xensource/libexec/xcp-rrdd-plugins/rrdp-squeezed
 %{__install} -m 755 -d %{buildroot}%{_unitdir}
@@ -50,6 +52,8 @@ cargo --offline test
 %endif
 
 %files
+%{_sbindir}/xcp-metrics
+%{_sbindir}/xcp-metrics-openmetrics-proxy
 %{_sbindir}/xcp-metrics-plugin-squeezed
 /opt/xensource/libexec/xcp-rrdd-plugins/rrdp-squeezed
 %{_unitdir}/rrdp-squeezed.service
@@ -58,5 +62,8 @@ cargo --offline test
 %systemd_post rrdp-squeezed.service
 
 %changelog
+* Wed Aug 30 2023 Yann Dirson <yann.dirson@vates.tech> - 0.0.1-el7.yd0
+- Add xcp-metrics itself, and OpenMetrics proxy
+
 * Wed Aug 23 2023 Yann Dirson <yann.dirson@vates.tech> - 0.0.0-el7.yd0
 - Initial packaging for demo purposes
